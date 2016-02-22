@@ -1,3 +1,5 @@
+function [nodes, edges] = gng_lax(Data)
+
 % Unsupervised Self Organizing Map. Growing Neural Gas (GNG) Algorithm.
 
 % Main paper used for development of this neural network was:
@@ -6,7 +8,7 @@
 % Data = data_train;
 clc;
 %clear; close all;
-colordef black
+%colordef black
 NumOfEpochs   = 500;
 NumOfSamples = fix(length(Data)/NumOfEpochs);
 age_inc               = 1;
@@ -18,6 +20,8 @@ lamda                   = 3;
 alpha                    = .5;     % q and f units error reduction constant.
 d                           = .99;   % Error reduction factor.
 RMSE                  = zeros(1,NumOfEpochs);
+
+PLOTIT = false;
 
 % load local_circular_2d1.mat
 % load local_circular_2d2.mat;
@@ -114,33 +118,35 @@ if wants_plot
         Epoch = Epoch(end-100:end);
     end
 
-    subplot(1,2,1);
-    plotgng(nodes,edges,'n');
-    % xlim([-1/2 2.5]);
-    % ylim([-1 8]);
-    % zlim([-1/2 1.5]);
-    % xlim([-1 6]);
-    % ylim([-1 6]);
-    % zlim([-7 7]);
-    drawnow;
+    if PLOTIT
+        subplot(1,2,1);
+        plotgng(nodes,edges,'n');
+        % xlim([-1/2 2.5]);
+        % ylim([-1 8]);
+        % zlim([-1/2 1.5]);
+        % xlim([-1 6]);
+        % ylim([-1 6]);
+        % zlim([-7 7]);
+        drawnow;
 
-    subplot(2,2,2);
-    plot(Epoch,RMSE,'r.');
-    title('RMS Error');
-    if kk>100
-         xlim([Epoch(1) Epoch(end)]);
-    end
-    xlabel('Training Epoch Number');
-    grid on;
+        subplot(2,2,2);
+        plot(Epoch,RMSE,'r.');
+        title('RMS Error');
+        if kk>100
+             xlim([Epoch(1) Epoch(end)]);
+        end
+        xlabel('Training Epoch Number');
+        grid on;
 
-    subplot(2,2,4);
-    plot(Epoch,Cur_NumOfNodes,'g.');
-    title('Number of Neural Units in the Growing Neural Gas');
-    if kk>100
-      xlim([Epoch(1) Epoch(end)]);
+        subplot(2,2,4);
+        plot(Epoch,Cur_NumOfNodes,'g.');
+        title('Number of Neural Units in the Growing Neural Gas');
+        if kk>100
+          xlim([Epoch(1) Epoch(end)]);
+        end
+        xlabel('Training Epoch Number');
+        grid on;
     end
-    xlabel('Training Epoch Number');
-    grid on;
 end
 
 end
