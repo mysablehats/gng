@@ -21,8 +21,8 @@ d                           = .99;   % Error reduction factor.
 RMSE                  = zeros(1,NumOfEpochs);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-PLOTIT = false;
-
+PLOTIT = true;
+DOOVER = 3;
 %%%%%%%%%%MESSAGES PART
 dbgmsg('generates GNG A and C matrices',1)
 dbgmsg('Executing GNG with: ', num2str(MAXNUMBEROFNODES),' nodes.',1)
@@ -64,7 +64,8 @@ error = [0 0];
 
 % scrsz = get(0,'ScreenSize');
 % figure('Position',[scrsz(3)/2 scrsz(4)/3-50 scrsz(3)/2 2*scrsz(4)/3])
-
+epoch = 0
+for jj=1:DOOVER
 for kk=1:NumOfEpochs
     
 % Choose the next Input Training Vectors.
@@ -98,7 +99,7 @@ error = d*error;
 
 end
 
-if PLOTIT
+if PLOTIT && mod(epoch,10)==0
     NumOfNodes = size(nodes,2);
     Cur_NumOfNodes = [Cur_NumOfNodes NumOfNodes];
     if length(Cur_NumOfNodes)>100
@@ -124,25 +125,26 @@ if PLOTIT
     % ylim([-1 6]);
     % zlim([-7 7]);
     drawnow;
-
-    subplot(2,2,2);
-    plot(Epoch,RMSE,'r.');
-    title('RMS Error');
-    if kk>100
-         xlim([Epoch(1) Epoch(end)]);
-    end
-    xlabel('Training Epoch Number');
-    grid on;
-
-    subplot(2,2,4);
-    plot(Epoch,Cur_NumOfNodes,'g.');
-    title('Number of Neural Units in the Growing Neural Gas');
-    if kk>100
-      xlim([Epoch(1) Epoch(end)]);
-    end
-    xlabel('Training Epoch Number');
-    grid on;
+% 
+%     subplot(2,2,2);
+%     plot(Epoch,RMSE,'r.');
+%     title('RMS Error');
+%     if kk>100
+%          xlim([Epoch(1) Epoch(end)]);
+%     end
+%     xlabel('Training Epoch Number');
+%     grid on;
+% 
+%     subplot(2,2,4);
+%     plot(Epoch,Cur_NumOfNodes,'g.');
+%     title('Number of Neural Units in the Growing Neural Gas');
+%     if kk>100
+%       xlim([Epoch(1) Epoch(end)]);
+%     end
+%     xlabel('Training Epoch Number');
+%     grid on;
 
 end
-
+epoch = epoch +1;
+end
 end
