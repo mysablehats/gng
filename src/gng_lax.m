@@ -22,7 +22,7 @@ RMSE                  = zeros(1,NumOfEpochs);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 PLOTIT = true;
-DOOVER = 3;
+DOOVER = 10;
 %%%%%%%%%%MESSAGES PART
 dbgmsg('generates GNG A and C matrices',1)
 dbgmsg('Executing GNG with: ', num2str(MAXNUMBEROFNODES),' nodes.',1)
@@ -100,23 +100,23 @@ error = d*error;
 end
 
 if PLOTIT && mod(epoch,10)==0
-    NumOfNodes = size(nodes,2);
-    Cur_NumOfNodes = [Cur_NumOfNodes NumOfNodes];
-    if length(Cur_NumOfNodes)>100
-        Cur_NumOfNodes = Cur_NumOfNodes(end-100:end);
-    end
-
-    Cur_RMSE(kk) = norm(error)/sqrt(NumOfNodes);
-    RMSE = [RMSE Cur_RMSE(kk)];
-    if length(RMSE)>100
-        RMSE = RMSE(end-100:end);
-    end
-
-    Epoch = [Epoch kk];
-    if length(Epoch)>100
-        Epoch = Epoch(end-100:end);
-    end
-    subplot(1,2,1);
+%     NumOfNodes = size(nodes,2);
+%     Cur_NumOfNodes = [Cur_NumOfNodes NumOfNodes];
+%     if length(Cur_NumOfNodes)>100
+%         Cur_NumOfNodes = Cur_NumOfNodes(end-100:end);
+%     end
+% 
+%     Cur_RMSE(kk) = norm(error)/sqrt(NumOfNodes);
+%     RMSE = [RMSE Cur_RMSE(kk)];
+%     if length(RMSE)>100
+%         RMSE = RMSE(end-100:end);
+%     end
+% 
+%     Epoch = [Epoch kk];
+%     if length(Epoch)>100
+%         Epoch = Epoch(end-100:end);
+%     end
+%     subplot(1,2,1);
     plotgwr(nodes,edges);%,'n'); %improved to show snazzy skeletors
     % xlim([-1/2 2.5]);
     % ylim([-1 8]);
