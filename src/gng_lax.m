@@ -1,7 +1,5 @@
 function [nodes, edges,s1,s2] = gng_lax(Data,MAXNUMBEROFNODES)
 
-disp(strcat('Executing GNG with: ', num2str(MAXNUMBEROFNODES),' nodes.'))
-
 % Unsupervised Self Organizing Map. Growing Neural Gas (GNG) Algorithm.
 
 % Main paper used for development of this neural network was:
@@ -25,6 +23,11 @@ RMSE                  = zeros(1,NumOfEpochs);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 PLOTIT = false;
 
+%%%%%%%%%%MESSAGES PART
+dbgmsg('generates GNG A and C matrices',1)
+dbgmsg('Executing GNG with: ', num2str(MAXNUMBEROFNODES),' nodes.',1)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Define the params vector where the GNG algorithm parameters are stored:
 params = [ age_inc;
