@@ -1,5 +1,7 @@
 function [nodes, edges,s1,s2] = gng_lax(Data,MAXNUMBEROFNODES)
-
+if (isempty(MAXNUMBEROFNODES)||MAXNUMBEROFNODES==0||isempty(Data))
+    error('Wrong input arguments. Either MAXNUMBEROFNODES or Data is zero, or empty.')
+end
 % Unsupervised Self Organizing Map. Growing Neural Gas (GNG) Algorithm.
 
 % Main paper used for development of this neural network was:
@@ -8,8 +10,8 @@ function [nodes, edges,s1,s2] = gng_lax(Data,MAXNUMBEROFNODES)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-NumOfEpochs   = 500;
-NumOfSamples = fix(length(Data)/NumOfEpochs);
+NumOfEpochs   = 5;
+NumOfSamples = fix(size(Data,2)/NumOfEpochs);
 age_inc               = 1;
 max_age             = 50;
 max_nodes         = MAXNUMBEROFNODES;
@@ -23,11 +25,7 @@ RMSE                  = zeros(1,NumOfEpochs);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 PLOTIT = false;
 
-%%%%%%%%%%MESSAGES PART
-dbgmsg('generates GNG A and C matrices',1)
-dbgmsg('Executing GNG with: ', num2str(MAXNUMBEROFNODES),' nodes.',1)
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Define the params vector where the GNG algorithm parameters are stored:
 params = [ age_inc;
@@ -60,17 +58,26 @@ ages = [ NaN  0;
                0  NaN;];
 
 % Initial Error Vector.
-error = [0 0];
+errorvector = [0 0];
 
 % scrsz = get(0,'ScreenSize');
 % figure('Position',[scrsz(3)/2 scrsz(4)/3-50 scrsz(3)/2 2*scrsz(4)/3])
+
+
+%%%%%%%%%%MESSAGES PART
+dbgmsg('generates GNG A and C matrices',1)
+dbgmsg('Executing GNG with: ', num2str(MAXNUMBEROFNODES),' nodes.',1)
+dbgmsg(num2str(params),1)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 for kk=1:NumOfEpochs
     
 % Choose the next Input Training Vectors.
 nextblock = (kk-1)*NumOfSamples+1:1:kk*NumOfSamples;
 
-% Step.1 Generate an input signal î according to P(î).
+% Step.1 Generate an input signal ï¿½ according to P(ï¿½).
 In = Data(:,nextblock);
 
 for n=1:NumOfSamples
@@ -78,23 +85,23 @@ for n=1:NumOfSamples
 params(9) = n;
 
 % Step 2. Find the two nearest units s1 and s2 to the new data sample.
-[s1 s2 distances] = findTwoNearest(In(:,n),nodes);
+[s1, s2, distances] = findTwoNearest(In(:,n),nodes);
 params(10) = s1;
 params(11) = s2;
 
 % Steps 3-6. Increment the age of all edges emanating from s1 .
-[nodes, edges, ages, error] = edgeManagement(In(:,n),nodes,edges,ages,error, distances, params);
+[nodes, edges, ages, errorvector] = edgeManagement(In(:,n),nodes,edges,ages,errorvector, distances, params);
 
 % Step 7. Dead Node Removal Procedure.
-[nodes, edges, ages, error] = removeUnconnected(nodes, edges,ages,error);
+[nodes, edges, ages, errorvector] = removeUnconnected(nodes, edges,ages,errorvector);
 
 % Step 8. Node Insertion Procedure.
 if mod(n,lamda)==0 && size(nodes,2)<max_nodes
-     [nodes,edges,ages,error] = addNewNeuron(nodes,edges,ages,error,alpha);
+     [nodes,edges,ages,errorvector] = addNewNeuron(nodes,edges,ages,errorvector,alpha);
 end
     
 % Step 9. Finally, decrease the error of all units.
-error = d*error;
+errorvector = d*errorvector;
 
 end
 
@@ -105,7 +112,7 @@ if PLOTIT
         Cur_NumOfNodes = Cur_NumOfNodes(end-100:end);
     end
 
-    Cur_RMSE(kk) = norm(error)/sqrt(NumOfNodes);
+    Cur_RMSE(kk) = norm(errorvector)/sqrt(NumOfNodes);
     RMSE = [RMSE Cur_RMSE(kk)];
     if length(RMSE)>100
         RMSE = RMSE(end-100:end);
@@ -145,4 +152,6 @@ if PLOTIT
 
 end
 
+end
+dbgmsg(strcat('End number of nodes:',num2str(size(nodes,2)),' With MAXNODES:',num2str(MAXNUMBEROFNODES)),1)
 end
