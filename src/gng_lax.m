@@ -54,6 +54,9 @@ if RANDOMSTART
     nn = randperm(size(Data,2),2);
     ni1 = nn(1);
     ni2 = nn(2);
+elseif isfield(PARAMS,'startingpoint')&&~isempty('PARAMS.startingpoint')
+    ni1 = PARAMS.startingpoint(1);
+    ni2 = PARAMS.startingpoint(2);
 end
 n1 = Data(:,ni1); n2 = Data(:,ni2);
 
