@@ -1,6 +1,6 @@
-function [nodes, edges,s1,s2] = gng_lax(Data,MAXNUMBEROFNODES)
-if (isempty(MAXNUMBEROFNODES)||MAXNUMBEROFNODES==0||isempty(Data))
-    error('Wrong input arguments. Either MAXNUMBEROFNODES or Data is zero, or empty.')
+function [nodes, edges,s1,s2] = gng_lax(Data,PARAMS)
+if (isempty(PARAMS.nodes)||PARAMS.nodes==0||isempty(Data))
+    error('Wrong input arguments. Either .nodes or Data is zero, or empty.')
 end
 % Unsupervised Self Organizing Map. Growing Neural Gas (GNG) Algorithm.
 
@@ -13,18 +13,18 @@ end
 NumOfEpochs   = 5;
 NumOfSamples = fix(size(Data,2)/NumOfEpochs);
 age_inc               = 1;
-max_age             = 50;
-max_nodes         = MAXNUMBEROFNODES;
-eb                         = .3;
-en                         = .006;
-lamda                   = 3;
-alpha                    = .5;     % q and f units error reduction constant.
-d                           = .99;   % Error reduction factor.
+max_age             = PARAMS.amax;
+max_nodes         = PARAMS.nodes;
+eb                         = PARAMS.eb;
+en                         = PARAMS.en;
+lamda                   = PARAMS.lambda;%3;
+alpha                    = PARAMS.alpha;%.5;     % q and f units error reduction constant.
+d                           = PARAMS.d;%.99;   % Error reduction factor.
 RMSE                  = zeros(1,NumOfEpochs);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-PLOTIT = false;
-
+PLOTIT = PARAMS.PLOTIT;%= false;
+RANDOMSTART = PARAMS.RANDOMSTART;
 
 
 % Define the params vector where the GNG algorithm parameters are stored:
@@ -47,7 +47,22 @@ Cur_NumOfNodes = [];
 
 % Step.0 Start with two neural units (nodes) selected from input data:
 NumOfNodes = 2;
-nodes = [Data(:,1)  Data(:,2)];
+
+ni1 = 1; 
+ni2 = 2; 
+if RANDOMSTART
+    nn = randperm(size(Data,2),2);
+    ni1 = nn(1);
+    ni2 = nn(2);
+elseif isfield(PARAMS,'startingpoint')&&~isempty('PARAMS.startingpoint')
+    ni1 = PARAMS.startingpoint(1);
+    ni2 = PARAMS.startingpoint(2);
+end
+n1 = Data(:,ni1); n2 = Data(:,ni2);
+
+nodes = [n1 n2];
+
+
 
 % Initial connections (edges) matrix.
 edges = [0  1;
@@ -66,7 +81,7 @@ errorvector = [0 0];
 
 %%%%%%%%%%MESSAGES PART
 dbgmsg('generates GNG A and C matrices',1)
-dbgmsg('Executing GNG with: ', num2str(MAXNUMBEROFNODES),' nodes.',1)
+dbgmsg('Executing GNG with: ', num2str(PARAMS.nodes),' nodes.',1)
 dbgmsg(num2str(params),1)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -153,5 +168,5 @@ if PLOTIT
 end
 
 end
-dbgmsg(strcat('End number of nodes:',num2str(size(nodes,2)),' With MAXNODES:',num2str(MAXNUMBEROFNODES)),1)
+dbgmsg(strcat('End number of nodes:',num2str(size(nodes,2)),' With MAXNODES:',num2str(PARAMS.nodes)),1)
 end
