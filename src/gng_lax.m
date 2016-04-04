@@ -24,8 +24,11 @@ RMSE                  = zeros(1,NumOfEpochs);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 PLOTIT = PARAMS.PLOTIT;%= false;
+if PLOTIT
+    plotgwr() % clears plot variables
+end
 RANDOMSTART = PARAMS.RANDOMSTART;
-
+MAX_EPOCHS = PARAMS.MAX_EPOCHS;
 
 % Define the params vector where the GNG algorithm parameters are stored:
 params = [ age_inc;
@@ -80,12 +83,14 @@ errorvector = [0 0];
 
 
 %%%%%%%%%%MESSAGES PART
-dbgmsg('generates GNG A and C matrices',1)
-dbgmsg('Executing GNG with: ', num2str(PARAMS.nodes),' nodes.',1)
-dbgmsg(num2str(params),1)
+%dbgmsg('generates GNG A and C matrices',1)
+%dbgmsg('Executing GNG with: ', num2str(PARAMS.nodes),' nodes.',1)
+%dbgmsg(num2str(params),1)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+therealk = 0;
 
+for someotherkindofepoch = 1:MAX_EPOCHS
 
 for kk=1:NumOfEpochs
     
@@ -96,7 +101,8 @@ nextblock = (kk-1)*NumOfSamples+1:1:kk*NumOfSamples;
 In = Data(:,nextblock);
 
 for n=1:NumOfSamples
-
+therealk = therealk +1;
+    
 params(9) = n;
 
 % Step 2. Find the two nearest units s1 and s2 to the new data sample.
@@ -122,23 +128,23 @@ end
 
 if PLOTIT
     NumOfNodes = size(nodes,2);
-    Cur_NumOfNodes = [Cur_NumOfNodes NumOfNodes];
-    if length(Cur_NumOfNodes)>100
-        Cur_NumOfNodes = Cur_NumOfNodes(end-100:end);
-    end
-
-    Cur_RMSE(kk) = norm(errorvector)/sqrt(NumOfNodes);
-    RMSE = [RMSE Cur_RMSE(kk)];
-    if length(RMSE)>100
-        RMSE = RMSE(end-100:end);
-    end
-
-    Epoch = [Epoch kk];
-    if length(Epoch)>100
-        Epoch = Epoch(end-100:end);
-    end
-    subplot(1,2,1);
-    plotgwr(nodes,edges);%,'n'); %improved to show snazzy skeletors
+%     Cur_NumOfNodes = [Cur_NumOfNodes NumOfNodes];
+%     if length(Cur_NumOfNodes)>100
+%         Cur_NumOfNodes = Cur_NumOfNodes(end-100:end);
+%     end
+% 
+%     Cur_RMSE(kk) = norm(errorvector)/sqrt(NumOfNodes);
+%     RMSE = [RMSE Cur_RMSE(kk)];
+%     if length(RMSE)>100
+%         RMSE = RMSE(end-100:end);
+%     end
+% 
+%     Epoch = [Epoch kk];
+%     if length(Epoch)>100
+%         Epoch = Epoch(end-100:end);
+%     end
+%     subplot(1,2,1);
+    plotgwr(nodes,edges, norm(errorvector)/sqrt(NumOfNodes), therealk, size(nodes,2));%,'n'); %improved to show snazzy skeletors
     % xlim([-1/2 2.5]);
     % ylim([-1 8]);
     % zlim([-1/2 1.5]);
@@ -147,26 +153,27 @@ if PLOTIT
     % zlim([-7 7]);
     drawnow;
 
-    subplot(2,2,2);
-    plot(Epoch,RMSE,'r.');
-    title('RMS Error');
-    if kk>100
-         xlim([Epoch(1) Epoch(end)]);
-    end
-    xlabel('Training Epoch Number');
-    grid on;
-
-    subplot(2,2,4);
-    plot(Epoch,Cur_NumOfNodes,'g.');
-    title('Number of Neural Units in the Growing Neural Gas');
-    if kk>100
-      xlim([Epoch(1) Epoch(end)]);
-    end
-    xlabel('Training Epoch Number');
-    grid on;
-
-end
+%     subplot(2,2,2);
+%     plot(Epoch,RMSE,'r.');
+%     title('RMS Error');
+%     if kk>100
+%          xlim([Epoch(1) Epoch(end)]);
+%     end
+%     xlabel('Training Epoch Number');
+%     grid on;
+% 
+%     subplot(2,2,4);
+%     plot(Epoch,Cur_NumOfNodes,'g.');
+%     title('Number of Neural Units in the Growing Neural Gas');
+%     if kk>100
+%       xlim([Epoch(1) Epoch(end)]);
+%     end
+%     xlabel('Training Epoch Number');
+%     grid on;
 
 end
-dbgmsg(strcat('End number of nodes:',num2str(size(nodes,2)),' With MAXNODES:',num2str(PARAMS.nodes)),1)
+
+end
+%dbgmsg(strcat('End number of nodes:',num2str(size(nodes,2)),' With MAXNODES:',num2str(PARAMS.nodes)),1)
+end
 end
