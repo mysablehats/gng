@@ -1,4 +1,4 @@
-function [nodes, edges,s1,s2] = gng_lax(Data,PARAMS)
+function [nodes, edges,outparams] = gng_lax(Data,PARAMS)
 if (isempty(PARAMS.nodes)||PARAMS.nodes==0||isempty(Data))
     error('Wrong input arguments. Either .nodes or Data is zero, or empty.')
 end
@@ -20,7 +20,7 @@ en                         = PARAMS.en;
 lamda                   = PARAMS.lambda;%3;
 alpha                    = PARAMS.alpha;%.5;     % q and f units error reduction constant.
 d                           = PARAMS.d;%.99;   % Error reduction factor.
-RMSE                  = zeros(1,NumOfEpochs);
+%RMSE                  = zeros(1,NumOfEpochs);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 PLOTIT = PARAMS.PLOTIT;%= false;
@@ -188,4 +188,9 @@ end
 end
 %dbgmsg(strcat('End number of nodes:',num2str(size(nodes,2)),' With MAXNODES:',num2str(PARAMS.nodes)),1)
 end
+outparams.graph.errorvect = errorvect;
+outparams.graph.epochvect = epochvect;
+outparams.graph.nodesvect = nodesvect;
+outparams.initialnodes = [ni1,ni2];
+
 end
