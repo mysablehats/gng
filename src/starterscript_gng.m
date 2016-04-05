@@ -1,8 +1,8 @@
 %start script
-%load('../share/local_uniform_2d.mat')
-Data = simplecluster_dataset;
+load('../share/local_uniform_2d.mat')
+%Data = simplecluster_dataset;
 %pkg load image %statistics
-NODES = 100;
+NODES = 1000;
 
 params = struct();
 
@@ -12,15 +12,15 @@ params.RANDOMSTART = false; % if true it overrides the .startingpoint variable
 n = randperm(size(Data,2),2);
 params.startingpoint = [n(1) n(2)];
 
-params.amax = 50; %greatest allowed age
+params.amax = 500; %greatest allowed age
 params.nodes = NODES; %maximum number of nodes/neurons in the gas
 params.en = 0.006; %epsilon subscript n
 params.eb = 0.2; %epsilon subscript b
 
 %Exclusive for gwr
 params.STATIC = true;
-params.MAX_EPOCHS = 10; % this means data will be run over twice
-params.at = 0.85; %activity threshold
+params.MAX_EPOCHS = 50; % this means data will be run over twice
+params.at = 0.80; %activity threshold
 params.h0 = 1;
 params.ab = 0.95;
 params.an = 0.95;
@@ -36,5 +36,9 @@ params.d                           = .99;   % Error reduction factor.
 
 tic
 A = gng_lax(Data,params);
+subplot(1,2,1);
+hold on
+plot(Data(1,:),Data(2,:), '.g', A(1,:)', A(2,:)', '.r')
+
 toc
 %scatter(A(1,:)', A(2,:)')

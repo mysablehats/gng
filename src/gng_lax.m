@@ -43,13 +43,19 @@ params = [ age_inc;
                     1;   % This is reserved for s1 (bmu);
                     2;]; % This is reserved for s2 (secbmu);
 
-Cur_RMSE = zeros(1,NumOfEpochs);
-RMSE = [];
-Epoch = [];
-Cur_NumOfNodes = [];
+% Cur_RMSE = zeros(1,NumOfEpochs);
+% RMSE = [];
+% Epoch = [];
+% Cur_NumOfNodes = [];
+
+alldatasetsize = nan(1,MAX_EPOCHS*size(Data,2));
+errorvect = alldatasetsize;
+epochvect = alldatasetsize;
+nodesvect = alldatasetsize;
+
 
 % Step.0 Start with two neural units (nodes) selected from input data:
-NumOfNodes = 2;
+% NumOfNodes = 2;
 
 ni1 = 1; 
 ni2 = 2; 
@@ -124,10 +130,15 @@ end
 % Step 9. Finally, decrease the error of all units.
 errorvector = d*errorvector;
 
+NumOfNodes = size(nodes,2);
+errorvect(therealk) = norm(errorvector)/sqrt(NumOfNodes);
+epochvect(therealk) = therealk;
+nodesvect(therealk) = size(nodes,2);
 end
 
+
+
 if PLOTIT
-    NumOfNodes = size(nodes,2);
 %     Cur_NumOfNodes = [Cur_NumOfNodes NumOfNodes];
 %     if length(Cur_NumOfNodes)>100
 %         Cur_NumOfNodes = Cur_NumOfNodes(end-100:end);
@@ -144,7 +155,8 @@ if PLOTIT
 %         Epoch = Epoch(end-100:end);
 %     end
 %     subplot(1,2,1);
-    plotgwr(nodes,edges, norm(errorvector)/sqrt(NumOfNodes), therealk, size(nodes,2));%,'n'); %improved to show snazzy skeletors
+
+    plotgwr(nodes,edges, errorvect, epochvect, nodesvect);%,'n'); %improved to show snazzy skeletors
     % xlim([-1/2 2.5]);
     % ylim([-1 8]);
     % zlim([-1/2 1.5]);
