@@ -24,12 +24,13 @@ d                           = PARAMS.d;%.99;   % Error reduction factor.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 PLOTIT = PARAMS.PLOTIT;%= false;
+layertype = PARAMS.layertype;
 if PLOTIT
     plotgwr() % clears plot variables
 end
 RANDOMSTART = PARAMS.RANDOMSTART;
 MAX_EPOCHS = PARAMS.MAX_EPOCHS;
-
+skelldef = PARAMS.skelldef;
 % Define the params vector where the GNG algorithm parameters are stored:
 params = [ age_inc;
                     max_age;
@@ -156,7 +157,7 @@ if PLOTIT
 %     end
 %     subplot(1,2,1);
 
-    plotgwr(nodes,edges, errorvect, epochvect, nodesvect);%,'n'); %improved to show snazzy skeletors
+    plotgwr(nodes,edges, errorvect, epochvect, nodesvect, skelldef, layertype);%,'n'); %improved to show snazzy skeletors
     % xlim([-1/2 2.5]);
     % ylim([-1 8]);
     % zlim([-1/2 1.5]);
